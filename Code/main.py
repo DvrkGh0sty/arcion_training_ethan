@@ -1,3 +1,4 @@
+
 # main code
 """
 Author: Ethan Mutsvairo
@@ -12,12 +13,10 @@ def format_user_info(user_info):
 def add_users(name, language):
     """Add a new user with their name and favorite language."""
     user_information = {"User name": name.strip(), "Language": language.strip()}
+    with open('data.txt', 'a') as d:
+        d.write(f"{user_information['User name']} | {user_information['Language']}\n")
     return user_information
-
-def main_code():
-    # Initialize empty list to store user information
-    key_info = []
-    
+def main_code(): # file doesn't exist yet, start empty    
     while True:
         print('\n1. Add users')
         print('2. View users')
@@ -26,38 +25,44 @@ def main_code():
             choice = input('What would you like to do: ').strip()
             if not choice:
                 print('Please enter a choice (1, 2, or 3)')
-                continue
-                
+                continue                    
             choice = int(choice)
             if choice == 1:
                 user_name = input('What is your name: ').strip()
-                user_language = input('What is your favorite language: ').strip()
-                
+                user_language = input('What is your favorite language: ').strip()                    
                 if not user_name or not user_language:
                     print('Name and language cannot be empty. Please try again.')
-                    continue
-                    
+                    continue                        
                 data = add_users(user_name, user_language)
                 key_info.append(data)
-                print('User information saved successfully!')
-                
+                print('User information saved successfully!') 
+                key_info = []
+                try:
+                    with open("data.txt", "r") as file:
+                        for line in file:
+                            line = line.strip()
+                            if line:
+                                try:
+                                    name, language = line.split(" | ")
+                                    key_info.append({"User name": name, "Language": language})
+                                except ValueError:
+                                    continue  # skip malformed lines
+                except FileNotFoundError:
+                    key_info = []  # file doesn't exist yet, start empty                      
             elif choice == 2:
                 if not key_info:
                     print('There are no users to display yet.')
                 else:
                     print('\nStored user information:')
                     for i, user in enumerate(key_info, 1):
-                        print(f"{i}. {format_user_info(user)}")
-                        
+                        print(f"{i}. {format_user_info(user)}")                            
             elif choice == 3:
                 decision = input('Are you sure you want to exit? (Y/n): ').strip().lower()
                 if decision == 'y':
                     print('Goodbye!')
-                    break
-                    
+                    break                        
             else:
-                print('Invalid choice! Please enter 1, 2, or 3')
-                
+                print('Invalid choice! Please enter 1, 2, or 3')                    
         except ValueError:
             print('Please enter a valid number!')
 
